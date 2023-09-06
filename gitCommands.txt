@@ -1,0 +1,30 @@
+local: 
+
+1 - git init
+
+2 - git add .
+
+3 - git commit -m "Comment"
+
+4 - To show all commits : git log
+
+5 - To show the content of the commit:
+
+git show <ID of the commit>
+
+6 - git reset --hard <ID of the commit>
+==========================================
+
+With GitHub:
+
+1 - git clone <URL> : to copy the remote repo
+
+2 - git branch <new branch>
+
+3 - git switch <new branch>
+
+4 - add / commit
+
+5 - git push : to upload the changes
+
+--- If we want to download the changes : git pull
