@@ -18,13 +18,13 @@ public class Teacher implements Serializable {
 
     private String name;
     private String email;
-    private String passWord;
+    private String password;
     private ArrayList<Course> Courses;
 
     public Teacher(String name, String email, String passWord) {
         this.name = name;
         this.email = email;
-        this.passWord = passWord;
+        this.password = passWord;
         this.Courses = new ArrayList();
     }
 
@@ -44,12 +44,12 @@ public class Teacher implements Serializable {
         this.email = email;
     }
 
-    public String getPassWord() {
-        return passWord;
+    public String getpassword() {
+        return password;
     }
 
-    public void setPassWord(String passWord) {
-        this.passWord = passWord;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public ArrayList<Course> getCourses() {

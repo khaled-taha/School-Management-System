@@ -8,7 +8,7 @@ import java.io.SerializablePermission;
 
 public class CustomObjectOutputStream extends ObjectOutputStream {
 
-    CustomObjectOutputStream(OutputStream out) throws IOException {
+    public CustomObjectOutputStream(OutputStream out) throws IOException {
         super(out);
     }
 
