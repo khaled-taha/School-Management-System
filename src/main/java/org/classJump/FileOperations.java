@@ -76,9 +76,52 @@ public class FileOperations {
         return teachers;
     }
 
-    // Update
-    // Delete
+    public void update(Teacher updatedTeacher, String email) {
+        List<Teacher> teachers = getAll();
 
+        for (int i = 0; i < teachers.size(); i++) {
+            Teacher teacher = teachers.get(i);
+
+            if (email.equals(updatedTeacher.getEmail())) {
+                teachers.set(i, updatedTeacher);
+                saveAll(teachers);
+                return;
+            }
+        }
+        System.out.println("Teacher not found for update.");
+    }
+
+    public void delete(String email) {
+        List<Teacher> teachers = getAll();
+
+        for (int i = 0; i < teachers.size(); i++) {
+            Teacher teacher = teachers.get(i);
+
+            if (teacher.getEmail().equals(email)) {
+                teachers.remove(i);
+                saveAll(teachers);
+                return;
+            }
+        }
+        System.out.println("Teacher not found for delete.");
+    }
+
+    private void saveAll(List<Teacher> teachers) {
+        try (FileOutputStream out = new FileOutputStream(this.file, false);
+             ObjectOutputStream cout = new ObjectOutputStream(out)) {
+            int index = 0;
+            for (Teacher teacher : teachers) {
+                if(index == 0){
+                    this.writeFirstObject(teacher);
+                }else {
+                    cout.writeObject(teacher);
+                    cout.flush();
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
 
 }
