@@ -7,24 +7,21 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ObjectStreamFile implements CRUDOperations{
-
-    private File file;
-    private String path = "objectStream.txt";
+public class ObjectStreamFile extends FileOperations{
 
     public ObjectStreamFile() {
-        this.file = new File(path);
+        super("objectStream.txt");
     }
 
     public ObjectStreamFile(String path) {
-        this.file = new File(path);
+        super(path);
     }
 
     @Override
     public void save(Teacher teacher) {
-        try (FileOutputStream out = new FileOutputStream(this.file, true);
+        try (FileOutputStream out = new FileOutputStream(this.getFile(), true);
              CustomObjectOutputStream cout = new CustomObjectOutputStream(out)) {
-            if (this.file.length() == 0) {
+            if (this.getFile().length() == 0) {
                 writeFirstObject(teacher);
             } else{
                 cout.writeObject(teacher);
@@ -39,7 +36,7 @@ public class ObjectStreamFile implements CRUDOperations{
     public Teacher find(String username, String password) {
         Teacher savedTeacher;
 
-        try (FileInputStream fin = new FileInputStream(this.path);
+        try (FileInputStream fin = new FileInputStream(this.getPath());
              ObjectInputStream in = new ObjectInputStream(fin)) {
 
             while ((savedTeacher = (Teacher) in.readObject()) != null) {
@@ -59,7 +56,7 @@ public class ObjectStreamFile implements CRUDOperations{
         Teacher savedTeacher;
         List<Teacher> teachers = new ArrayList<>();
 
-        try ( FileInputStream fin = new FileInputStream(this.file);
+        try ( FileInputStream fin = new FileInputStream(this.getFile());
               ObjectInputStream in = new ObjectInputStream(fin);) {
 
             while ((savedTeacher = (Teacher) in.readObject()) != null) {
@@ -105,7 +102,7 @@ public class ObjectStreamFile implements CRUDOperations{
     }
 
     private void writeFirstObject(Teacher teacher){
-        try ( FileOutputStream out = new FileOutputStream(this.file, true);
+        try ( FileOutputStream out = new FileOutputStream(this.getFile(), true);
               ObjectOutputStream obut = new ObjectOutputStream(out)) {
             obut.writeObject(teacher);
             obut.flush();
@@ -115,7 +112,7 @@ public class ObjectStreamFile implements CRUDOperations{
     }
 
     private void saveAll(List<Teacher> teachers) {
-        try (FileOutputStream out = new FileOutputStream(this.file);
+        try (FileOutputStream out = new FileOutputStream(this.getFile());
              ObjectOutputStream cout = new ObjectOutputStream(out)) {
             int index = 0;
             for (Teacher teacher : teachers) {

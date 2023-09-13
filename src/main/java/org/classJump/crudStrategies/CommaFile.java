@@ -6,22 +6,19 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CommaFile implements CRUDOperations{
-
-    private File file;
-    private String path = "comma.txt";
+public class CommaFile extends FileOperations{
 
     public CommaFile() {
-        this.file = new File(path);
+        super("comma.txt");
     }
 
     public CommaFile(String path) {
-        this.file = new File(path);
+        super(path);
     }
 
     @Override
     public void save(Teacher teacher) {
-        try (FileOutputStream out = new FileOutputStream(this.file, true);
+        try (FileOutputStream out = new FileOutputStream(this.getFile(), true);
              PrintWriter writer = new PrintWriter(out)) {
             String line = teacher.getName() + "," + teacher.getEmail() + "," + teacher.getpassword();
             writer.println(line);
@@ -32,15 +29,15 @@ public class CommaFile implements CRUDOperations{
 
     @Override
     public Teacher find(String username, String password) {
-        try (FileReader fin = new FileReader(this.path);
+        try (FileReader fin = new FileReader(this.getPath());
              BufferedReader reader = new BufferedReader(fin)) {
 
             String line;
             while ((line = reader.readLine()) != null) {
-                String savedUsername = line.split(",")[0];
-                String savedEmail = line.split(",")[1];
-                if (username.equals(savedUsername) && password.equals(savedEmail)) {
-                    return new Teacher(savedUsername, savedEmail, line.split(",")[2]);
+                String[] attributes = line.split(",");
+                if (attributes.length == 3 &&
+                        username.equals(attributes[0]) && password.equals(attributes[2])) {
+                    return new Teacher(attributes[0], attributes[1], attributes[2]);
                 }
             }
         } catch (Exception e) {
@@ -54,12 +51,14 @@ public class CommaFile implements CRUDOperations{
     public List<Teacher> findAll() {
         ArrayList<Teacher> teachers = new ArrayList<>();
 
-        try (FileReader fin = new FileReader(this.path);
+        try (FileReader fin = new FileReader(this.getPath());
              BufferedReader reader = new BufferedReader(fin)) {
 
             String line;
             while ((line = reader.readLine()) != null) {
-                teachers.add(new Teacher(line.split(",")[0], line.split(",")[1], line.split(",")[2]));
+                String[] attributes = line.split(",");
+                if(attributes.length == 3)
+                    teachers.add(new Teacher(attributes[0], attributes[1], attributes[2]));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -101,7 +100,7 @@ public class CommaFile implements CRUDOperations{
     }
 
     private void saveAll(List<Teacher> teachers) {
-        try (FileOutputStream out = new FileOutputStream(this.file);
+        try (FileOutputStream out = new FileOutputStream(this.getFile());
              PrintWriter writer = new PrintWriter(out)) {
             teachers.forEach(teacher -> {
                 String line = teacher.getName() + "," + teacher.getEmail() + "," + teacher.getpassword();
