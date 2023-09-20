@@ -9,6 +9,7 @@ import org.classJump.Exceptions.CourseNotFoundException;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  *
@@ -63,6 +64,19 @@ public class Teacher implements Serializable {
     public void addCourse(Course course) {
         Courses.add(course);
 
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Teacher teacher = (Teacher) o;
+        return Objects.equals(name, teacher.name) && Objects.equals(email, teacher.email) && Objects.equals(password, teacher.password) && Objects.equals(Courses, teacher.Courses);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, email, password, Courses);
     }
 
     public void deleteCourse(String courseName) {

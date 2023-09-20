@@ -10,10 +10,6 @@ import org.classJump.Exceptions.SheetNotFoundException;
 
 import java.util.ArrayList;
 
-/**
- *
- * @author CoNNect
- */
 public class Course {
 
     private String name;

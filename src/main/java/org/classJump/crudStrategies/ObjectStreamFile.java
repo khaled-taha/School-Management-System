@@ -1,5 +1,6 @@
 package org.classJump.crudStrategies;
 
+import org.apache.poi.ss.formula.functions.T;
 import org.classJump.CustomObjectOutputStream;
 import org.classJump.models.Teacher;
 
@@ -7,7 +8,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ObjectStreamFile extends FileOperations{
+public class ObjectStreamFile<T> extends FileOperations<T>{
 
     public ObjectStreamFile() {
         super("objectStream.txt");
@@ -18,7 +19,7 @@ public class ObjectStreamFile extends FileOperations{
     }
 
     @Override
-    public void save(Teacher teacher) {
+    public void save(T teacher) {
         try (FileOutputStream out = new FileOutputStream(this.getFile(), true);
              CustomObjectOutputStream cout = new CustomObjectOutputStream(out)) {
             if (this.getFile().length() == 0) {
@@ -33,14 +34,14 @@ public class ObjectStreamFile extends FileOperations{
     }
 
     @Override
-    public Teacher find(String username, String password) {
+    public Teacher find(T teacher) {
         Teacher savedTeacher;
 
         try (FileInputStream fin = new FileInputStream(this.getPath());
              ObjectInputStream in = new ObjectInputStream(fin)) {
 
             while ((savedTeacher = (Teacher) in.readObject()) != null) {
-                if (username.equals(savedTeacher.getName()) && password.equals(savedTeacher.getpassword())) {
+                if (teacher.equals(savedTeacher)) {
                     return savedTeacher;
                 }
             }
@@ -52,14 +53,14 @@ public class ObjectStreamFile extends FileOperations{
     }
 
     @Override
-    public List<Teacher> findAll() {
-        Teacher savedTeacher;
-        List<Teacher> teachers = new ArrayList<>();
+    public List<T> findAll() {
+        T savedTeacher;
+        List<T> teachers = new ArrayList<>();
 
         try ( FileInputStream fin = new FileInputStream(this.getFile());
               ObjectInputStream in = new ObjectInputStream(fin);) {
 
-            while ((savedTeacher = (Teacher) in.readObject()) != null) {
+            while ((savedTeacher = (T) in.readObject()) != null) {
                 teachers.add(savedTeacher);
             }
         } catch (Exception e) {
@@ -70,13 +71,13 @@ public class ObjectStreamFile extends FileOperations{
     }
 
     @Override
-    public void update(Teacher updatedTeacher, String email) {
-        List<Teacher> teachers = findAll();
+    public void update(T oldTeacher, T updatedTeacher) {
+        List<T> teachers = findAll();
 
         for (int i = 0; i < teachers.size(); i++) {
-            Teacher teacher = teachers.get(i);
+            T teacher = teachers.get(i);
 
-            if (teacher.getEmail().equals(email)) {
+            if (teacher.equals(oldTeacher)) {
                 teachers.set(i, updatedTeacher);
                 saveAll(teachers);
                 return;
@@ -85,14 +86,15 @@ public class ObjectStreamFile extends FileOperations{
         System.out.println("Teacher not found for update.");
     }
 
+
     @Override
-    public void delete(String email) {
-        List<Teacher> teachers = findAll();
+    public void delete(T teacher) {
+        List<T> teachers = findAll();
 
         for (int i = 0; i < teachers.size(); i++) {
-            Teacher teacher = teachers.get(i);
+            T savedTeacher = teachers.get(i);
 
-            if (teacher.getEmail().equals(email)) {
+            if (teacher.equals(savedTeacher)) {
                 teachers.remove(i);
                 saveAll(teachers);
                 return;
@@ -101,7 +103,7 @@ public class ObjectStreamFile extends FileOperations{
         System.out.println("Teacher not found for delete.");
     }
 
-    private void writeFirstObject(Teacher teacher){
+    private void writeFirstObject(T teacher){
         try ( FileOutputStream out = new FileOutputStream(this.getFile(), true);
               ObjectOutputStream obut = new ObjectOutputStream(out)) {
             obut.writeObject(teacher);
@@ -111,11 +113,11 @@ public class ObjectStreamFile extends FileOperations{
         }
     }
 
-    private void saveAll(List<Teacher> teachers) {
+    private void saveAll(List<T> teachers) {
         try (FileOutputStream out = new FileOutputStream(this.getFile());
              ObjectOutputStream cout = new ObjectOutputStream(out)) {
             int index = 0;
-            for (Teacher teacher : teachers) {
+            for (T teacher : teachers) {
                 if(index == 0){
                     this.writeFirstObject(teacher);
                 }else {
