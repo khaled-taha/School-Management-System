@@ -1,6 +1,8 @@
 package org.classJump;
 
 import java.util.*;
+
+import org.apache.poi.ss.formula.functions.T;
 import org.classJump.repositories.CommaFile;
 import org.classJump.repositories.FileRepository;
 import org.classJump.models.Teacher;
@@ -12,7 +14,6 @@ public class Main {
 
         operations.save(new Teacher("khaled","email" ,"123" ));
         operations.save(new Teacher("khaledtaha","email123" ,"1234" ));
-
         List<Teacher> teachers = operations.findAll();
 
         System.out.println("Find All Method: ");
@@ -26,9 +27,10 @@ public class Main {
         System.out.println(teacher);
         System.out.println("----------------------------------");
 
-
     }
 
 }
+
+
 
 

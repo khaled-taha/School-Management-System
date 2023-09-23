@@ -24,9 +24,11 @@ public class CommaFile<T> extends FileRepository<T> {
     public void save(T model) throws Exception {
         try (FileOutputStream out = new FileOutputStream(this.getFile(), true);
              PrintWriter writer = new PrintWriter(out)) {
+
              String[] attributes = ToStringParsing.extractAttributes(model.toString());
              String line = attributes[0] + "," + attributes[1] + "," + attributes[2];
              writer.println(line);
+
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
