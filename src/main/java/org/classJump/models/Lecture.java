@@ -10,30 +10,34 @@ package org.classJump.models;
  * @author CoNNect
  */
 public class Lecture {
+
+    private String id;
     private String name;
     private String description;
-    private String fileName;
 
-    public Lecture(String lectureName, String discription, String fileName) {
-        this.name = lectureName;
-        this.description = discription;
-        this.fileName = fileName;
-    }
-   
-    public String getFileName() {
-        return fileName;
+    private byte number;
+
+    public Lecture(String id, String name, String description, byte number) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.number = number;
     }
 
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String lectureName) {
-        this.name = lectureName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getDescription() {
@@ -43,6 +47,12 @@ public class Lecture {
     public void setDescription(String description) {
         this.description = description;
     }
-    
-       
+
+    public byte getNumber() {
+        return number;
+    }
+
+    public void setNumber(byte number) {
+        this.number = number;
+    }
 }

@@ -1,55 +1,63 @@
 package org.classJump.crudStrategies;
 
-import org.classJump.models.Teacher;
+import org.classJump.utils.ToStringParsing;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CommaFile extends FileOperations{
+public class CommaFile<T> extends FileRepository<T> {
 
-    public CommaFile() {
+    private Class<T> modelClass;
+
+    public CommaFile(Class<T> modelClass) {
         super("comma.txt");
+        this.modelClass = modelClass;
     }
 
-    public CommaFile(String path) {
+    public CommaFile(String path, Class<T> modelClass) {
         super(path);
+        this.modelClass = modelClass;
     }
 
     @Override
-    public void save(Teacher teacher) {
+    public void save(T model) throws Exception {
         try (FileOutputStream out = new FileOutputStream(this.getFile(), true);
              PrintWriter writer = new PrintWriter(out)) {
-            String line = teacher.getName() + "," + teacher.getEmail() + "," + teacher.getpassword();
-            writer.println(line);
+             String[] attributes = ToStringParsing.extractAttributes(model.toString());
+             String line = attributes[0] + "," + attributes[1] + "," + attributes[2];
+             writer.println(line);
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new Exception(e.getMessage());
         }
     }
 
     @Override
-    public Teacher find(String username, String password) {
+    public T find(T model) throws Exception {
         try (FileReader fin = new FileReader(this.getPath());
              BufferedReader reader = new BufferedReader(fin)) {
 
             String line;
             while ((line = reader.readLine()) != null) {
-                String[] attributes = line.split(",");
-                if (attributes.length == 3 &&
-                        username.equals(attributes[0]) && password.equals(attributes[2])) {
-                    return new Teacher(attributes[0], attributes[1], attributes[2]);
+                String[] storedAttributes = line.split(",");
+                String[] modelAttributes = ToStringParsing.extractAttributes(model.toString());
+                if (storedAttributes.length == 3 &&
+                        modelAttributes[0].equals(storedAttributes[0])
+                        && modelAttributes[1].equals(storedAttributes[1])
+                        && modelAttributes[2].equals(storedAttributes[2])) {
+                    return model;
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new Exception(e.getMessage());
         }
 
         return null;
     }
 
     @Override
-    public List<Teacher> findAll() {
-        ArrayList<Teacher> teachers = new ArrayList<>();
+    public List<T> findAll() throws Exception {
+        ArrayList<T> objects = new ArrayList<>();
 
         try (FileReader fin = new FileReader(this.getPath());
              BufferedReader reader = new BufferedReader(fin)) {
@@ -57,57 +65,62 @@ public class CommaFile extends FileOperations{
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] attributes = line.split(",");
-                if(attributes.length == 3)
-                    teachers.add(new Teacher(attributes[0], attributes[1], attributes[2]));
+                if (attributes.length == 3) {
+                    // Use reflection to create an instance of the specified class
+                    T obj = this.modelClass.getDeclaredConstructor(String[].class).newInstance((Object) attributes);
+                    objects.add(obj);
+                }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new Exception(e.getMessage());
         }
 
-        return teachers;
+        return objects;
     }
 
     @Override
-    public void update(Teacher updatedTeacher, String email) {
-        List<Teacher> teachers = findAll();
+    public void update(T oldModel, T updatedModel) throws Exception {
+        List<T> models = findAll();
 
-        for (int i = 0; i < teachers.size(); i++) {
-            Teacher teacher = teachers.get(i);
+        for (int i = 0; i < models.size(); i++) {
+            T model = models.get(i);
 
-            if (teacher.getEmail().equals(email)) {
-                teachers.set(i, updatedTeacher);
-                saveAll(teachers);
+            if (model.equals(oldModel)) {
+                models.set(i, updatedModel);
+                saveAll(models);
                 return;
             }
         }
-        System.out.println("Teacher not found for update.");
+        System.out.println(oldModel.getClass().getName() + " not found for update.");
     }
 
     @Override
-    public void delete(String email) {
-        List<Teacher> teachers = findAll();
+    public void delete(T model) throws Exception {
+        List<T> models = findAll();
 
-        for (int i = 0; i < teachers.size(); i++) {
-            Teacher teacher = teachers.get(i);
+        for (int i = 0; i < models.size(); i++) {
+            T storedModel = models.get(i);
 
-            if (teacher.getEmail().equals(email)) {
-                teachers.remove(i);
-                saveAll(teachers);
+            if (storedModel.equals(model)) {
+                models.remove(i);
+                saveAll(models);
                 return;
             }
         }
-        System.out.println("Teacher not found for delete.");
+        System.out.println(model.getClass().getName() + " not found for delete.");
     }
 
-    private void saveAll(List<Teacher> teachers) {
+    @Override
+    public void saveAll(List<T> models) throws Exception {
         try (FileOutputStream out = new FileOutputStream(this.getFile());
              PrintWriter writer = new PrintWriter(out)) {
-            teachers.forEach(teacher -> {
-                String line = teacher.getName() + "," + teacher.getEmail() + "," + teacher.getpassword();
+            models.forEach(model -> {
+                String[] attributes = ToStringParsing.extractAttributes(model.toString());
+                String line = attributes[0] + "," + attributes[1] + "," + attributes[2];
                 writer.println(line);
             });
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new Exception(e.getMessage());
         }
     }
 }

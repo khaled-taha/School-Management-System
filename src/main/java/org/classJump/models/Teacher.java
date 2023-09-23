@@ -5,8 +5,6 @@
  */
 package org.classJump.models;
 
-import org.classJump.Exceptions.CourseNotFoundException;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Objects;
@@ -20,13 +18,19 @@ public class Teacher implements Serializable {
     private String name;
     private String email;
     private String password;
-    private ArrayList<Course> Courses;
+    private ArrayList<String> CoursesIds;
 
     public Teacher(String name, String email, String passWord) {
         this.name = name;
         this.email = email;
         this.password = passWord;
-        this.Courses = new ArrayList();
+        this.CoursesIds = new ArrayList();
+    }
+
+    public Teacher(String[] attributes) {
+        this.name = attributes[0];
+        this.email = attributes[1];
+        this.password = attributes[2];
     }
 
     public String getName() {
@@ -45,7 +49,7 @@ public class Teacher implements Serializable {
         this.email = email;
     }
 
-    public String getpassword() {
+    public String getPassword() {
         return password;
     }
 
@@ -53,17 +57,21 @@ public class Teacher implements Serializable {
         this.password = password;
     }
 
-    public ArrayList<Course> getCourses() {
-        return Courses;
+    public ArrayList<String> getCoursesIds() {
+        return CoursesIds;
     }
 
-    public void setCourses(ArrayList<Course> Courses) {
-        this.Courses = Courses;
+    public void setCoursesIds(ArrayList<String> coursesIds) {
+        CoursesIds = coursesIds;
     }
 
-    public void addCourse(Course course) {
-        Courses.add(course);
-
+    @Override
+    public String toString() {
+        return "Teacher{" +
+                "name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                '}';
     }
 
     @Override
@@ -71,32 +79,11 @@ public class Teacher implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Teacher teacher = (Teacher) o;
-        return Objects.equals(name, teacher.name) && Objects.equals(email, teacher.email) && Objects.equals(password, teacher.password) && Objects.equals(Courses, teacher.Courses);
+        return Objects.equals(name, teacher.name) && Objects.equals(email, teacher.email) && Objects.equals(password, teacher.password);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, email, password, Courses);
-    }
-
-    public void deleteCourse(String courseName) {
-        try {
-            ArrayList<Course> courses = this.searchCourse(courseName);
-            this.Courses.removeAll(courses);
-        } catch (CourseNotFoundException e) {
-            System.out.println(e.getMessage());
-        }
-    }
-
-    private ArrayList<Course> searchCourse(String courseName) throws CourseNotFoundException {
-        ArrayList<Course> courses = new ArrayList<>();
-        for (Course course : this.Courses) {
-            if (course.getName() != null && course.getName().equalsIgnoreCase(courseName)) {
-                courses.add(course);
-            }
-        }
-        if (courses.isEmpty())
-            throw new CourseNotFoundException("Course'" + courseName + "'not found");
-        return courses;
+        return Objects.hash(name, email, password);
     }
 }

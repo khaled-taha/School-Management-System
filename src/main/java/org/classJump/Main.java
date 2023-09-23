@@ -1,30 +1,34 @@
 package org.classJump;
 
 import java.util.*;
-import org.classJump.crudStrategies.FileOperations;
-import org.classJump.crudStrategies.ObjectStreamFile;
-import org.classJump.models.Sheet;
+import org.classJump.crudStrategies.CommaFile;
+import org.classJump.crudStrategies.FileRepository;
 import org.classJump.models.Teacher;
 
 public class Main {
 
-    public static void main(String[] args) {
-        FileOperations operations = new ObjectStreamFile();
+    public static void main(String[] args) throws Exception {
+        FileRepository<Teacher> operations = new CommaFile<>(Teacher.class);
 
-        ClassJump jump = new ClassJump(operations);
+        operations.save(new Teacher("khaled","email" ,"123" ));
+        operations.save(new Teacher("khaledtaha","email123" ,"1234" ));
 
-           jump.registerTeacher("khaled","email" ,"123" );
-           jump.registerTeacher("khaledtaha","email123" ,"1234" );
+        List<Teacher> teachers = operations.findAll();
 
-           List<Teacher> teachers = operations.findAll();
-          teachers.forEach(teacher -> {
-              System.out.println(teacher.getName());
+        System.out.println("Find All Method: ");
+        teachers.forEach(teacher -> {
+            System.out.println(teacher.getName());
           });
+        System.out.println("----------------------------------");
 
-          FileOperations<Sheet> teacherFileOperations = new ObjectStreamFile<>();
+        System.out.println("Find Method: ");
+        Teacher teacher = operations.find(new Teacher("khaled","email" ,"123" ));
+        System.out.println(teacher);
+        System.out.println("----------------------------------");
+
 
     }
-}
 
+}
 
 

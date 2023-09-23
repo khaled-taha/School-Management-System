@@ -1,14 +1,10 @@
 package org.classJump.crudStrategies;
 
-import org.apache.poi.ss.formula.functions.T;
-import org.classJump.CustomObjectOutputStream;
-import org.classJump.models.Teacher;
-
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ObjectStreamFile<T> extends FileOperations<T>{
+public class ObjectStreamFile<T> extends FileRepository<T> {
 
     public ObjectStreamFile() {
         super("objectStream.txt");
@@ -19,114 +15,115 @@ public class ObjectStreamFile<T> extends FileOperations<T>{
     }
 
     @Override
-    public void save(T teacher) {
+    public void save(T model) throws Exception {
         try (FileOutputStream out = new FileOutputStream(this.getFile(), true);
              CustomObjectOutputStream cout = new CustomObjectOutputStream(out)) {
             if (this.getFile().length() == 0) {
-                writeFirstObject(teacher);
+                writeFirstObject(model);
             } else{
-                cout.writeObject(teacher);
+                cout.writeObject(model);
                 cout.flush();
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new Exception(e.getMessage());
         }
     }
 
     @Override
-    public Teacher find(T teacher) {
-        Teacher savedTeacher;
+    public T find(T model) throws Exception {
+        T savedModel;
 
         try (FileInputStream fin = new FileInputStream(this.getPath());
              ObjectInputStream in = new ObjectInputStream(fin)) {
 
-            while ((savedTeacher = (Teacher) in.readObject()) != null) {
-                if (teacher.equals(savedTeacher)) {
-                    return savedTeacher;
+            while ((savedModel = (T) in.readObject()) != null) {
+                if (model.equals(savedModel)) {
+                    return savedModel;
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new Exception(e.getMessage());
         }
 
         return null;
     }
 
     @Override
-    public List<T> findAll() {
-        T savedTeacher;
-        List<T> teachers = new ArrayList<>();
+    public List<T> findAll() throws Exception {
+        T savedModel;
+        List<T> models = new ArrayList<>();
 
         try ( FileInputStream fin = new FileInputStream(this.getFile());
               ObjectInputStream in = new ObjectInputStream(fin);) {
 
-            while ((savedTeacher = (T) in.readObject()) != null) {
-                teachers.add(savedTeacher);
+            while ((savedModel = (T) in.readObject()) != null) {
+                models.add(savedModel);
             }
         } catch (Exception e) {
-            System.out.println("End File...........");
+           throw new Exception(e.getMessage());
         }
 
-        return teachers;
+        return models;
     }
 
     @Override
-    public void update(T oldTeacher, T updatedTeacher) {
-        List<T> teachers = findAll();
+    public void update(T oldModel, T updatedModel) throws Exception {
+        List<T> models = findAll();
 
-        for (int i = 0; i < teachers.size(); i++) {
-            T teacher = teachers.get(i);
+        for (int i = 0; i < models.size(); i++) {
+            T teacher = models.get(i);
 
-            if (teacher.equals(oldTeacher)) {
-                teachers.set(i, updatedTeacher);
-                saveAll(teachers);
+            if (teacher.equals(oldModel)) {
+                models.set(i, updatedModel);
+                saveAll(models);
                 return;
             }
         }
-        System.out.println("Teacher not found for update.");
+        System.out.println(oldModel.getClass().getName() + " not found for update.");
     }
 
 
     @Override
-    public void delete(T teacher) {
-        List<T> teachers = findAll();
+    public void delete(T model) throws Exception {
+        List<T> models = findAll();
 
-        for (int i = 0; i < teachers.size(); i++) {
-            T savedTeacher = teachers.get(i);
+        for (int i = 0; i < models.size(); i++) {
+            T savedTeacher = models.get(i);
 
-            if (teacher.equals(savedTeacher)) {
-                teachers.remove(i);
-                saveAll(teachers);
+            if (model.equals(savedTeacher)) {
+                models.remove(i);
+                saveAll(models);
                 return;
             }
         }
-        System.out.println("Teacher not found for delete.");
+        System.out.println(model.getClass().getName() + " not found for delete.");
     }
 
-    private void writeFirstObject(T teacher){
+    private void writeFirstObject(T model) throws Exception {
         try ( FileOutputStream out = new FileOutputStream(this.getFile(), true);
               ObjectOutputStream obut = new ObjectOutputStream(out)) {
-            obut.writeObject(teacher);
+            obut.writeObject(model);
             obut.flush();
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new Exception(e.getMessage());
         }
     }
 
-    private void saveAll(List<T> teachers) {
+    @Override
+    public void saveAll(List<T> models) throws Exception {
         try (FileOutputStream out = new FileOutputStream(this.getFile());
              ObjectOutputStream cout = new ObjectOutputStream(out)) {
             int index = 0;
-            for (T teacher : teachers) {
+            for (T model : models) {
                 if(index == 0){
-                    this.writeFirstObject(teacher);
+                    this.writeFirstObject(model);
                 }else {
-                    cout.writeObject(teacher);
+                    cout.writeObject(model);
                     cout.flush();
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new Exception(e.getMessage());
         }
     }
 }

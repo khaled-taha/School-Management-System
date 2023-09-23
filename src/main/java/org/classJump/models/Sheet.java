@@ -11,30 +11,32 @@ package org.classJump.models;
  */
 public class Sheet {
 
-    private String number;
+    private String id;
+    private String name;
     private String description;
-    private String fileName;
+    private byte number;
 
-    public Sheet(String sheetNumbers, String discription, String fileName) {
-        this.number = sheetNumbers;
-        this.description = discription;
-        this.fileName = fileName;
+    public Sheet(String code, String name, String description, byte number) {
+        this.id = code;
+        this.name = name;
+        this.description = description;
+        this.number = number;
     }
 
-    public String getFileName() {
-        return fileName;
+    public String getId() {
+        return id;
     }
 
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
+    public void setId(String id) {
+        this.id = id;
     }
 
-    public String getNumbers() {
-        return number;
+    public String getName() {
+        return name;
     }
 
-    public void setNumbers(String sheetNumbers) {
-        this.number = sheetNumbers;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getDescription() {
@@ -45,4 +47,11 @@ public class Sheet {
         this.description = description;
     }
 
+    public byte getNumber() {
+        return number;
+    }
+
+    public void setNumber(byte number) {
+        this.number = number;
+    }
 }

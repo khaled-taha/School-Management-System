@@ -1,4 +1,4 @@
-package org.classJump;
+package org.classJump.crudStrategies;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
