@@ -1,7 +1,7 @@
 package org.classJump.unitTesting.Repository;
 
-import org.classJump.crudStrategies.CommaFile;
-import org.classJump.crudStrategies.FileRepository;
+import org.classJump.repositories.CommaFile;
+import org.classJump.repositories.FileRepository;
 import org.classJump.models.Teacher;
 
 import java.lang.reflect.Method;

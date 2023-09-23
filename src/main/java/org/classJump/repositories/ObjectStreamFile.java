@@ -1,4 +1,4 @@
-package org.classJump.crudStrategies;
+package org.classJump.repositories;
 
 import java.io.*;
 import java.util.ArrayList;

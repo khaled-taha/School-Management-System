@@ -1,10 +1,8 @@
-package org.classJump.crudStrategies;
+package org.classJump.repositories;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
-import java.io.SerializablePermission;
 
 public class CustomObjectOutputStream extends ObjectOutputStream {
 

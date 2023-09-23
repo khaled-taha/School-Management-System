@@ -1,6 +1,6 @@
 package org.classJump.services;
 
-import org.classJump.crudStrategies.FileRepository;
+import org.classJump.repositories.FileRepository;
 import org.classJump.models.Teacher;
 
 public class TeacherService {
